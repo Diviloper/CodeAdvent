@@ -1,0 +1,3 @@
+name: diviloper_advent_code
+dependencies:
+  equatable: ^1.0.1
