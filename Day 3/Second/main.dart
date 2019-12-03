@@ -34,9 +34,9 @@ class Point extends Equatable {
 void main() {
   final file = new File('./input.txt');
   List<String> wires = file.readAsLinesSync();
-  List<Set<Point>> points = [];
+  List<List<Point>> points = [];
   for (var wire in wires) {
-    Set<Point> wirePoints = {};
+    List<Point> wirePoints = [];
     Point current = Point.zero();
     for (var segment in wire.split(',')) {
       final String dir = segment[0];
@@ -63,10 +63,19 @@ void main() {
     }
     points.add(wirePoints);
   }
-  Set<Point> crosses = points[0].intersection(points[1]);
-  Point closest =
-      crosses.reduce((current, next) => current < next ? current : next);
+  Set<Point> crosses = points[0].toSet().intersection(points[1].toSet());
+  Map<Point, int> distances = Map.fromIterable(crosses,
+      key: (cross) => cross,
+      value: (cross) => points[0].indexOf(cross) + points[1].indexOf(cross) + 2);
+  Point closest = null;
+  int minDistance = distances.values.first;
+  for (var entry in distances.entries) {
+    if (minDistance >= entry.value) {
+      minDistance = entry.value;
+      closest = entry.key;
+    }
+  }
   print("Crosses: ${crosses.length}");
   print("Closest: $closest");
-  print("Distance: ${closest.distanceFromOrigin()}");
+  print("Distance: ${distances[closest]}");
 }
