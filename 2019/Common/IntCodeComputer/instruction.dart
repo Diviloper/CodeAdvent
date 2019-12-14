@@ -1,7 +1,11 @@
 import 'dart:io';
+import 'dart:async';
+import 'dart:collection';
+
+import 'package:async/async.dart';
 
 abstract class Instruction {
-  int run(List<int> program, int instructionPointer);
+  Future<int> run(List<int> program, int instructionPointer);
 
   int get numParams => 0;
 
@@ -30,8 +34,9 @@ abstract class Instruction {
 class Addition extends Instruction {
   @override
   int get numParams => 3;
+
   @override
-  int run(List<int> program, int instructionPointer) {
+  Future<int> run(List<int> program, int instructionPointer) async {
     List<int> modes = _getModes(program[instructionPointer], numParams);
     program[program[instructionPointer + 3]] =
         _getParam(program, modes[0], program[instructionPointer + 1]) +
@@ -45,8 +50,9 @@ class Addition extends Instruction {
 class Multiplication extends Instruction {
   @override
   int get numParams => 3;
+
   @override
-  int run(List<int> program, int instructionPointer) {
+  Future<int> run(List<int> program, int instructionPointer) async {
     List<int> modes = _getModes(program[instructionPointer], numParams);
     program[program[instructionPointer + 3]] =
         _getParam(program, modes[0], program[instructionPointer + 1]) *
@@ -62,7 +68,7 @@ class Read extends Instruction {
   int get numParams => 1;
 
   @override
-  int run(List<int> program, int instructionPointer) {
+  Future<int> run(List<int> program, int instructionPointer) async {
     print("Enter value: ");
     int input = int.tryParse(stdin.readLineSync());
     while (input == null) {
@@ -76,15 +82,58 @@ class Read extends Instruction {
   }
 }
 
-class Write extends Instruction {
+class ReadStream extends Instruction {
+  final StreamQueue<int> input;
+
+  ReadStream(Stream<int> inputStream) : input = StreamQueue(inputStream);
+
   @override
   int get numParams => 1;
 
   @override
-  int run(List<int> program, int instructionPointer) {
+  Future<int> run(List<int> program, int instructionPointer) async {
+    while (!await input.hasNext) {
+      print("Waiting for input");
+      await Future.delayed(Duration(milliseconds: 5));
+    }
+    program[program[instructionPointer + 1]] = await input.next;
+    return program[instructionPointer + 1] == instructionPointer
+        ? instructionPointer
+        : instructionPointer + numParams + 1;
+  }
+}
+
+class ReadInput extends Instruction {
+  final Queue<int> input;
+
+  ReadInput(this.input);
+
+  @override
+  int get numParams => 1;
+
+  @override
+  Future<int> run(List<int> program, int instructionPointer) async {
+    program[program[instructionPointer + 1]] = input.removeFirst();
+    return program[instructionPointer + 1] == instructionPointer
+        ? instructionPointer
+        : instructionPointer + numParams + 1;
+  }
+}
+
+class Write extends Instruction {
+  final Function callback;
+
+  Write(this.callback);
+
+  @override
+  int get numParams => 1;
+
+  @override
+  Future<int> run(List<int> program, int instructionPointer) async {
     List<int> modes = _getModes(program[instructionPointer], numParams);
-    print(
-        "Machine write: ${_getParam(program, modes[0], program[instructionPointer + 1])}");
+    final out = _getParam(program, modes[0], program[instructionPointer + 1]);
+    print("Machine write: $out");
+    callback?.call(out);
     return instructionPointer + numParams + 1;
   }
 }
@@ -94,7 +143,7 @@ class JumpIfTrue extends Instruction {
   int get numParams => 2;
 
   @override
-  int run(List<int> program, int instructionPointer) {
+  Future<int> run(List<int> program, int instructionPointer) async {
     final modes = _getModes(program[instructionPointer], numParams);
     if (_getParam(program, modes[0], program[instructionPointer + 1]) != 0) {
       return _getParam(program, modes[1], program[instructionPointer + 2]);
@@ -108,7 +157,7 @@ class JumpIfFalse extends Instruction {
   int get numParams => 2;
 
   @override
-  int run(List<int> program, int instructionPointer) {
+  Future<int> run(List<int> program, int instructionPointer) async {
     final modes = _getModes(program[instructionPointer], numParams);
     if (_getParam(program, modes[0], program[instructionPointer + 1]) == 0) {
       return _getParam(program, modes[1], program[instructionPointer + 2]);
@@ -122,7 +171,7 @@ class LessThan extends Instruction {
   int get numParams => 3;
 
   @override
-  int run(List<int> program, int instructionPointer) {
+  Future<int> run(List<int> program, int instructionPointer) async {
     final modes = _getModes(program[instructionPointer], numParams);
     bool lessThan =
         _getParam(program, modes[0], program[instructionPointer + 1]) <
@@ -139,7 +188,7 @@ class Equals extends Instruction {
   int get numParams => 3;
 
   @override
-  int run(List<int> program, int instructionPointer) {
+  Future<int> run(List<int> program, int instructionPointer) async {
     final modes = _getModes(program[instructionPointer], numParams);
     bool equals =
         _getParam(program, modes[0], program[instructionPointer + 1]) ==
@@ -153,12 +202,13 @@ class Equals extends Instruction {
 
 class Halt extends Instruction {
   @override
-  int run(List<int> program, int instructionPointer) {
+  Future<int> run(List<int> program, int instructionPointer) async {
     return -1;
   }
 }
 
 class IntCodeException implements Exception {
   final String message;
+
   IntCodeException(this.message);
 }
