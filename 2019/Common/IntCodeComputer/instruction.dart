@@ -4,7 +4,13 @@ import 'dart:collection';
 
 import 'package:async/async.dart';
 
+import 'intCodeComputer.dart';
+
 abstract class Instruction {
+  final IntCodeMachine machine;
+
+  Instruction(this.machine);
+
   Future<int> run(List<int> program, int instructionPointer);
 
   int get numParams => 0;
@@ -25,6 +31,19 @@ abstract class Instruction {
         return program[param];
       case 1:
         return param;
+      case 2:
+        return program[param + machine.relativeOffset];
+      default:
+        throw IntCodeException("Incorrect param mode");
+    }
+  }
+
+  int _getReference(int mode, int param) {
+    switch (mode) {
+      case 0:
+        return param;
+      case 2:
+        return param + machine.relativeOffset;
       default:
         throw IntCodeException("Incorrect param mode");
     }
@@ -32,13 +51,15 @@ abstract class Instruction {
 }
 
 class Addition extends Instruction {
+  Addition(IntCodeMachine machine) : super(machine);
+
   @override
   int get numParams => 3;
 
   @override
   Future<int> run(List<int> program, int instructionPointer) async {
     List<int> modes = _getModes(program[instructionPointer], numParams);
-    program[program[instructionPointer + 3]] =
+    program[_getReference(modes[2], program[instructionPointer + 3])] =
         _getParam(program, modes[0], program[instructionPointer + 1]) +
             _getParam(program, modes[1], program[instructionPointer + 2]);
     return program[instructionPointer + 3] == instructionPointer
@@ -48,13 +69,15 @@ class Addition extends Instruction {
 }
 
 class Multiplication extends Instruction {
+  Multiplication(IntCodeMachine machine) : super(machine);
+
   @override
   int get numParams => 3;
 
   @override
   Future<int> run(List<int> program, int instructionPointer) async {
     List<int> modes = _getModes(program[instructionPointer], numParams);
-    program[program[instructionPointer + 3]] =
+    program[_getReference(modes[2], program[instructionPointer + 3])] =
         _getParam(program, modes[0], program[instructionPointer + 1]) *
             _getParam(program, modes[1], program[instructionPointer + 2]);
     return program[instructionPointer + 3] == instructionPointer
@@ -64,6 +87,8 @@ class Multiplication extends Instruction {
 }
 
 class Read extends Instruction {
+  Read(IntCodeMachine machine) : super(machine);
+
   @override
   int get numParams => 1;
 
@@ -75,7 +100,8 @@ class Read extends Instruction {
       print("Value invalid. Try again: ");
       input = int.tryParse(stdin.readLineSync());
     }
-    program[program[instructionPointer + 1]] = input;
+    final modes = _getModes(program[instructionPointer], numParams);
+    program[_getReference(modes[0], program[instructionPointer + 1])] = input;
     return program[instructionPointer + 1] == instructionPointer
         ? instructionPointer
         : instructionPointer + numParams + 1;
@@ -85,7 +111,9 @@ class Read extends Instruction {
 class ReadStream extends Instruction {
   final StreamQueue<int> input;
 
-  ReadStream(Stream<int> inputStream) : input = StreamQueue(inputStream);
+  ReadStream(IntCodeMachine machine, Stream<int> inputStream)
+      : input = StreamQueue(inputStream),
+        super(machine);
 
   @override
   int get numParams => 1;
@@ -96,7 +124,8 @@ class ReadStream extends Instruction {
       print("Waiting for input");
       await Future.delayed(Duration(milliseconds: 5));
     }
-    program[program[instructionPointer + 1]] = await input.next;
+    final modes = _getModes(program[instructionPointer], numParams);
+    program[_getReference(modes[0], program[instructionPointer + 1])] = await input.next;
     return program[instructionPointer + 1] == instructionPointer
         ? instructionPointer
         : instructionPointer + numParams + 1;
@@ -106,14 +135,15 @@ class ReadStream extends Instruction {
 class ReadInput extends Instruction {
   final Queue<int> input;
 
-  ReadInput(this.input);
+  ReadInput(IntCodeMachine machine, this.input) : super(machine);
 
   @override
   int get numParams => 1;
 
   @override
   Future<int> run(List<int> program, int instructionPointer) async {
-    program[program[instructionPointer + 1]] = input.removeFirst();
+    final modes = _getModes(program[instructionPointer], numParams);
+    program[_getReference(modes[0], program[instructionPointer + 1])] = input.removeFirst();
     return program[instructionPointer + 1] == instructionPointer
         ? instructionPointer
         : instructionPointer + numParams + 1;
@@ -121,9 +151,7 @@ class ReadInput extends Instruction {
 }
 
 class Write extends Instruction {
-  final Function callback;
-
-  Write(this.callback);
+  Write(IntCodeMachine machine) : super(machine);
 
   @override
   int get numParams => 1;
@@ -133,12 +161,14 @@ class Write extends Instruction {
     List<int> modes = _getModes(program[instructionPointer], numParams);
     final out = _getParam(program, modes[0], program[instructionPointer + 1]);
     print("Machine write: $out");
-    callback?.call(out);
+    machine.addOutput(out);
     return instructionPointer + numParams + 1;
   }
 }
 
 class JumpIfTrue extends Instruction {
+  JumpIfTrue(IntCodeMachine machine) : super(machine);
+
   @override
   int get numParams => 2;
 
@@ -153,6 +183,8 @@ class JumpIfTrue extends Instruction {
 }
 
 class JumpIfFalse extends Instruction {
+  JumpIfFalse(IntCodeMachine machine) : super(machine);
+
   @override
   int get numParams => 2;
 
@@ -167,6 +199,8 @@ class JumpIfFalse extends Instruction {
 }
 
 class LessThan extends Instruction {
+  LessThan(IntCodeMachine machine) : super(machine);
+
   @override
   int get numParams => 3;
 
@@ -176,7 +210,7 @@ class LessThan extends Instruction {
     bool lessThan =
         _getParam(program, modes[0], program[instructionPointer + 1]) <
             _getParam(program, modes[1], program[instructionPointer + 2]);
-    program[program[instructionPointer + 3]] = lessThan ? 1 : 0;
+    program[_getReference(modes[2], program[instructionPointer + 3])] = lessThan ? 1 : 0;
     return program[instructionPointer + 3] == instructionPointer
         ? instructionPointer
         : instructionPointer + numParams + 1;
@@ -184,6 +218,8 @@ class LessThan extends Instruction {
 }
 
 class Equals extends Instruction {
+  Equals(IntCodeMachine machine) : super(machine);
+
   @override
   int get numParams => 3;
 
@@ -193,14 +229,31 @@ class Equals extends Instruction {
     bool equals =
         _getParam(program, modes[0], program[instructionPointer + 1]) ==
             _getParam(program, modes[1], program[instructionPointer + 2]);
-    program[program[instructionPointer + 3]] = equals ? 1 : 0;
+    program[_getReference(modes[2], program[instructionPointer + 3])] = equals ? 1 : 0;
     return program[instructionPointer + 3] == instructionPointer
         ? instructionPointer
         : instructionPointer + numParams + 1;
   }
 }
 
+class RelativeBaseOffset extends Instruction {
+  RelativeBaseOffset(IntCodeMachine machine) : super(machine);
+
+  @override
+  int get numParams => 1;
+
+  @override
+  Future<int> run(List<int> program, int instructionPointer) async {
+    final modes = _getModes(program[instructionPointer], numParams);
+    machine.relativeOffset +=
+        _getParam(program, modes[0], program[instructionPointer + 1]);
+    return instructionPointer + numParams + 1;
+  }
+}
+
 class Halt extends Instruction {
+  Halt(IntCodeMachine machine) : super(machine);
+
   @override
   Future<int> run(List<int> program, int instructionPointer) async {
     return -1;
