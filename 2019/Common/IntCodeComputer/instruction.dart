@@ -160,7 +160,6 @@ class Write extends Instruction {
   Future<int> run(List<int> program, int instructionPointer) async {
     List<int> modes = _getModes(program[instructionPointer], numParams);
     final out = _getParam(program, modes[0], program[instructionPointer + 1]);
-    print("Machine write: $out");
     machine.addOutput(out);
     return instructionPointer + numParams + 1;
   }
