@@ -1,6 +1,6 @@
 name: diviloper_advent_code
 dependencies:
-  equatable: ^1.0.1
-  trotter: ^1.1.0
-  async: ^2.4.0
+  equatable: ^1.2.4
+  trotter: ^1.2.0
+  async: ^2.4.2
   collection: ^1.14.12
