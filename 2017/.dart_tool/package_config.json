@@ -1,0 +1,13 @@
+{
+  "configVersion": 2,
+  "packages": [
+    {
+      "name": "diviloper_advent_code_2017",
+      "rootUri": "../",
+      "packageUri": "lib/"
+    }
+  ],
+  "generated": "2020-08-27T10:41:55.338112Z",
+  "generator": "pub",
+  "generatorVersion": "2.9.2"
+}

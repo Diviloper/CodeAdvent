@@ -1,0 +1,38 @@
+{
+  "configVersion": 2,
+  "packages": [
+    {
+      "name": "collection",
+      "rootUri": "file:///C:/Users/victo/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/collection-1.14.12",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
+      "name": "equatable",
+      "rootUri": "file:///C:/Users/victo/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/equatable-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
+      "name": "meta",
+      "rootUri": "file:///C:/Users/victo/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/meta-1.1.8",
+      "packageUri": "lib/",
+      "languageVersion": "1.12"
+    },
+    {
+      "name": "trotter",
+      "rootUri": "file:///C:/Users/victo/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/trotter-1.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
+      "name": "diviloper_advent_code",
+      "rootUri": "../",
+      "packageUri": "lib/",
+      "languageVersion": "2.7"
+    }
+  ],
+  "generated": "2019-12-11T12:40:14.460732Z",
+  "generator": "pub",
+  "generatorVersion": "2.7.0"
+}
