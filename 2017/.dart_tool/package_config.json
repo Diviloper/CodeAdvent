@@ -2,12 +2,30 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "collection",
+      "rootUri": "file:///C:/Users/Victor/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/collection-1.14.13",
+      "packageUri": "lib/",
+      "languageVersion": "2.3"
+    },
+    {
+      "name": "equatable",
+      "rootUri": "file:///C:/Users/Victor/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/equatable-1.2.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
+      "name": "meta",
+      "rootUri": "file:///C:/Users/Victor/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/meta-1.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "1.12"
+    },
+    {
       "name": "diviloper_advent_code_2017",
       "rootUri": "../",
       "packageUri": "lib/"
     }
   ],
-  "generated": "2020-08-27T11:05:47.140150Z",
+  "generated": "2020-08-27T17:33:26.605074Z",
   "generator": "pub",
-  "generatorVersion": "2.9.2"
+  "generatorVersion": "2.8.4"
 }
