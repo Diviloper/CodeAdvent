@@ -50,3 +50,24 @@ extension EquatableList<T> on List<T> {
     return true;
   }
 }
+
+bool Function(int, int) comparator(String symbol) {
+  switch(symbol) {
+    case '>':
+      return (a, b) => a > b;
+    case '<':
+      return (a, b) => a < b;
+    case '=>':
+    case '>=':
+      return (a, b) => a >= b;
+    case '=<':
+    case '<=':
+      return (a, b) => a <= b;
+    case '==':
+      return (a, b) => a == b;
+    case '!=':
+      return (a, b) => a != b;
+    default:
+      throw 'Invalid symbol';
+  }
+}
