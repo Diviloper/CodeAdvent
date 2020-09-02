@@ -40,7 +40,7 @@ void second() {
         break outer;
       } else {
         coords = moves[move % 4](coords);
-        cells[coords] = coords.neighbors.map((e) => cells[e]).where((e) => e != null).reduce((a, b) => a+b);
+        cells[coords] = coords.neighborsFull.map((e) => cells[e]).where((e) => e != null).reduce((a, b) => a+b);
       }
     }
     move++;

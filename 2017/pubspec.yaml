@@ -2,3 +2,4 @@ name: diviloper_advent_code_2017
 
 dependencies:
   equatable: ^1.2.4
+  async: ^2.4.2
