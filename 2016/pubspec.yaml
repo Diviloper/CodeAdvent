@@ -1,0 +1,4 @@
+name: diviloper_advent_code_2016
+
+dependencies:
+  equatable: ^1.2.4
