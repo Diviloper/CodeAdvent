@@ -2,3 +2,4 @@ name: diviloper_advent_code_2016
 
 dependencies:
   equatable: ^1.2.4
+  crypto: ^2.1.5
