@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 
 class FabricPiece {
-  int id;
-  int left;
-  int top;
-  int width;
-  int height;
+  late int id;
+  late int left;
+  late int top;
+  late int width;
+  late int height;
 
   FabricPiece.fromString(String input) {
     String line = input.replaceAll(' ', '').substring(1);
@@ -29,7 +29,7 @@ class FabricPiece {
 }
 
 class Point extends Equatable {
-  int x, y;
+  final int x, y;
 
   @override
   List<Object> get props => [x, y];
