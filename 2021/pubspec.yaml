@@ -1,5 +1,5 @@
 name: advent_of_code_2021
-description: A simple command-line application.
+description: Advent of Code year 2021
 # version: 1.0.0
 # homepage: https://www.example.com
 
@@ -10,4 +10,4 @@ dependencies:
   equatable: ^1.2.5
 
 dev_dependencies:
-  pedantic: ^1.9.0
+  lints: ^1.0.1
