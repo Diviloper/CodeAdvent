@@ -13,7 +13,7 @@ void main() {
 
 void findPositionWithConstantFuelConsumption(List<int> crabPositions) {
   final median = crabPositions[crabPositions.length ~/ 2];
-  final fuel = crabPositions.fold(0, (v, e) => v + (e - median).abs());
+  final fuel = crabPositions.fold<int>(0, (v, e) => v + (e - median).abs());
   print(fuel);
 }
 
