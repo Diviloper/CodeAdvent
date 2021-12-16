@@ -17,3 +17,13 @@ class Tuple<X, Y> extends Equatable {
   @override
   String toString() => '($first, $second)';
 }
+
+extension Frequencies<T> on Iterable<T> {
+  Map<T, int> get frequencies {
+    final frequencies = <T, int>{};
+    for (final element in this) {
+      frequencies.update(element, (value) => value + 1, ifAbsent: () => 1);
+    }
+    return frequencies;
+  }
+}
