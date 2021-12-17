@@ -1,41 +1,78 @@
 import 'dart:io';
-
-import 'package:double_linked_list/double_linked_list.dart';
+import 'dart:math';
 
 import '../common.dart';
 
 void main() {
   final input = File('./input.txt').readAsLinesSync();
-  final polymer = input.first.split('');
+  final polymer = input.first;
   final rules = {
     for (final rule in input.skip(2))
-      rule.split(' -> ').first: rule.split(' -> ').last
+      Tuple<String, String>.fromList(rule.split(' -> ').first.split('')):
+          rule.split(' -> ').last
   };
-  expandPolymer(10, DoubleLinkedList.fromIterable(polymer), rules);
-  // expandPolymer(40, DoubleLinkedList.fromIterable(polymer), rules);
+  expandPolymer(10, polymer, rules);
+  expandPolymer(40, polymer, rules);
 }
 
-void expandPolymer(int steps, DoubleLinkedList<String> polymer, Map<String, String> rules) {
-  for (int i = 0; i < steps; ++i) {
-    for (var node = polymer.first; !node.isLast; node = node.next) {
-      final newElement = rules['${node.content}${node.next.content}'];
-      if (newElement != null) {
-        node = node.insertAfter(newElement);
-      }
-    }
-    print(polymer.content.join());
-    print(polymer.content.frequencies);
+void expandPolymer(
+  int steps,
+  String polymer,
+  Map<Tuple<String, String>, String> rules,
+) {
+  final elements = polymer.split('');
+  var pairAmounts = <Tuple<String, String>, int>{};
+  for (int i = 1; i < elements.length; ++i) {
+    pairAmounts.update(
+      Tuple(elements[i - 1], elements[i]),
+      (value) => value + 1,
+      ifAbsent: () => 1,
+    );
   }
-  final frequencies = polymer.content.frequencies;
-  Tuple<String, int> mostFrequentElement = Tuple('A', 0);
-  Tuple<String, int> leastFrequentElement = Tuple('A', polymer.length);
-  for (final element in frequencies.keys) {
-    if (frequencies[element]! > mostFrequentElement.second) {
-      mostFrequentElement = Tuple(element, frequencies[element]!);
+  for (int step = 0; step < steps; ++step) {
+    final newPolymerAmounts = <Tuple<String, String>, int>{};
+    for (final entry in pairAmounts.entries) {
+      final pair = entry.key;
+      final value = entry.value;
+      final newElement = rules[pair];
+      if (newElement == null) continue;
+      newPolymerAmounts.update(
+        Tuple(pair.first, newElement),
+        (v) => v + value,
+        ifAbsent: () => value,
+      );
+      newPolymerAmounts.update(
+        Tuple(newElement, pair.second),
+        (v) => v + value,
+        ifAbsent: () => value,
+      );
     }
-    if (frequencies[element]! < leastFrequentElement.second) {
-      leastFrequentElement = Tuple(element, frequencies[element]!);
-    }
+    pairAmounts = newPolymerAmounts;
   }
-  print(mostFrequentElement.second - leastFrequentElement.second);
+  Map<String, int> elementFrequencies =
+      getElementFrequencies(pairAmounts, elements);
+  final maxFreq = elementFrequencies.values.reduce(max);
+  final minFreq = elementFrequencies.values.reduce(min);
+  print(maxFreq - minFreq);
+}
+
+Map<String, int> getElementFrequencies(
+    Map<Tuple<String, String>, int> pairAmounts, List<String> elements) {
+  final elementFrequencies = <String, int>{};
+  for (final entry in pairAmounts.entries) {
+    final pair = entry.key;
+    final value = entry.value;
+    elementFrequencies.update(
+      pair.first,
+      (v) => v + value,
+      ifAbsent: () => value,
+    );
+    elementFrequencies.update(
+      pair.second,
+      (v) => v + value,
+      ifAbsent: () => value,
+    );
+  }
+  elementFrequencies.updateAll((key, value) => (value / 2).ceil());
+  return elementFrequencies;
 }
