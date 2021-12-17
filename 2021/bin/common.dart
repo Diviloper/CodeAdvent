@@ -27,3 +27,11 @@ extension Frequencies<T> on Iterable<T> {
     return frequencies;
   }
 }
+
+extension Hex on int {
+  static int parse(String source) => int.parse(source, radix: 16);
+}
+
+extension Bin on int {
+  static int parse(String source) => int.parse(source, radix: 2);
+}
