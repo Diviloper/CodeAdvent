@@ -22,3 +22,13 @@ class Position extends Equatable {
   @override
   List<Object> get props => [x, y];
 }
+
+class Pair<F, S> extends Equatable {
+  final F first;
+  final S second;
+
+  Pair(this.first, this.second);
+
+  @override
+  List<dynamic> get props => [first, second];
+}
