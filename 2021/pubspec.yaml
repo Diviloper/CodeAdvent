@@ -1,0 +1,15 @@
+name: advent_of_code_2021
+description: Advent of Code year 2021
+# version: 1.0.0
+# homepage: https://www.example.com
+
+environment:
+  sdk: '>=2.14.0 <3.0.0'
+
+dependencies:
+  collection: ^1.15.0
+  double_linked_list: ^2.0.1
+  equatable: ^2.0.3
+
+dev_dependencies:
+  lints: ^1.0.1

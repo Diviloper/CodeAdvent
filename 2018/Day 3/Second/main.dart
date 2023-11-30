@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 
 class FabricPiece {
-  int id;
-  int left;
-  int bot;
-  int width;
-  int height;
+  late int id;
+  late int left;
+  late int bot;
+  late int width;
+  late int height;
 
   int get right => left + width - 1;
 
@@ -26,11 +26,7 @@ class FabricPiece {
     height = int.parse(size[1]);
   }
 
-  bool notOverlaps(FabricPiece other) =>
-      right < other.left ||
-      left > other.right ||
-      top < other.bot ||
-      bot > other.top;
+  bool notOverlaps(FabricPiece other) => right < other.left || left > other.right || top < other.bot || bot > other.top;
 
   bool overlaps(FabricPiece other) => !notOverlaps(other);
 
@@ -50,11 +46,8 @@ class Point extends Equatable {
 }
 
 void main() {
-  final fabricPieces = File("input.txt")
-      .readAsLinesSync()
-      .map((line) => FabricPiece.fromString(line))
-      .toList();
-  FabricPiece nonOverlapped = null;
+  final fabricPieces = File("input.txt").readAsLinesSync().map((line) => FabricPiece.fromString(line)).toList();
+  FabricPiece? nonOverlapped = null;
   for (int i = 0; i < fabricPieces.length; ++i) {
     bool valid = true;
     for (int j = 0; j < fabricPieces.length; ++j) {
@@ -69,5 +62,5 @@ void main() {
       break;
     }
   }
-  print(nonOverlapped.id);
+  print(nonOverlapped!.id);
 }
