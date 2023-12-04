@@ -5,6 +5,7 @@ environment:
   sdk: ^3.2.2
 
 dependencies:
+  collection: ^1.18.0
   # path: ^1.8.0
 
 dev_dependencies:
