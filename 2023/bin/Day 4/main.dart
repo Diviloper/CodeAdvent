@@ -34,7 +34,7 @@ int getNumberOfScratchards(List<String> lines) {
       lines.map(getNumbers).map((e) => getNumMatchingNumbers(e.$1, e.$2));
   for (final (i, point) in points.indexed) {
     for (int j = 1; j <= point && i + j < copies.length; ++j) {
-      copies[i + j] += 1 * copies[i];
+      copies[i + j] += copies[i];
     }
   }
   return copies.sum;
