@@ -23,3 +23,7 @@ extension PositionExtended on Position {
     return false;
   }
 }
+
+extension IntIterable on Iterable<int> {
+  int get prod => fold(1, (value, element) => value * element);
+}
