@@ -13,7 +13,7 @@ void main() {
 
 int getPartNumbers(List<String> lines) {
   final (numbers, symbols) = getCoords(lines);
-  final symbolCoords = symbols.map((e) => e.$2).toList();
+  final symbolCoords = symbols.seconds.toList();
   return numbers
       .where((element) => isAdjacent(element.$2, element.$3, symbolCoords))
       .fold(0, (value, element) => value + element.$1);

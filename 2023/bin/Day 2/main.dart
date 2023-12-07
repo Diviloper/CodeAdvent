@@ -1,19 +1,17 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
+
+import '../common.dart';
+
 void main() {
   final games =
       File('./bin/Day 2/input.txt').readAsLinesSync().map(processGame).toList();
 
-  final possibleGamesSum = games
-      .where((e) => isPossible(e.$2, [12, 13, 14]))
-      .fold(0, (previousValue, element) => previousValue + element.$1);
-  print(possibleGamesSum);
+  print(games.where((e) => isPossible(e.$2, [12, 13, 14])).firsts.sum);
 
-  final gamesPower = games
-      .map((e) => getPower(e.$2))
-      .reduce((value, element) => value + element);
-  print(gamesPower);
+  print(games.seconds.map((e) => e.prod).sum);
 }
 
 const Map<String, int> indices = {
@@ -40,5 +38,3 @@ const Map<String, int> indices = {
 bool isPossible(List<int> game, List<int> dices) {
   return game.indexed.every((element) => element.$2 <= dices[element.$1]);
 }
-
-int getPower(List<int> game) => game.reduce((value, elem) => value * elem);

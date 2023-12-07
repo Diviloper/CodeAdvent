@@ -1,19 +1,20 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
+
 void main() {
   final input = File('./bin/Day 1/input.txt').readAsLinesSync();
-  print(getCalibration(input));
-  print(getCalibration(replaceTextNumbers(input).toList()));
+
+  print(input.map(getCalibrationValue).sum);
+  print(input.map(replaceTextNumbers).map(getCalibrationValue).sum);
 }
 
-int getCalibration(List<String> lines) {
-  return lines
-      .map((e) => e.split('').map(int.tryParse).whereType<int>().toList())
-      .map((e) => e.first * 10 + e.last)
-      .reduce((value, element) => value + element);
+int getCalibrationValue(String line) {
+  final parts = line.split('').map(int.tryParse).whereType<int>();
+  return parts.first * 10 + parts.last;
 }
 
-Iterable<String> replaceTextNumbers(List<String> lines) => lines.map((e) => e
+String replaceTextNumbers(String line) => line
     .replaceAll('one', 'one1one')
     .replaceAll('two', 'two2two')
     .replaceAll('three', 'three3three')
@@ -22,4 +23,4 @@ Iterable<String> replaceTextNumbers(List<String> lines) => lines.map((e) => e
     .replaceAll('six', 'six6six')
     .replaceAll('seven', 'seven7seven')
     .replaceAll('eight', 'eight8eight')
-    .replaceAll('nine', 'nine9nine'));
+    .replaceAll('nine', 'nine9nine');

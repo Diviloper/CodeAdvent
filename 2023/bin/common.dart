@@ -46,4 +46,15 @@ Iterable<(F, S)> zip<F, S>(Iterable<F> first, Iterable<S> second) =>
 extension Zipper<F, S> on Iterable<(F, S)> {
   Iterable<T> zippedMap<T>(T Function(F first, S second) toElement) =>
       map((e) => toElement(e.$1, e.$2));
+
+  Iterable<F> get firsts => zippedMap((first, second) => first);
+
+  Iterable<S> get seconds => zippedMap((first, second) => second);
+}
+
+Iterable<int> naturals() sync* {
+  int i = 0;
+  while (true) {
+    yield i++;
+  }
 }

@@ -1,13 +1,16 @@
 import 'dart:io';
 import 'dart:math';
+
 import 'package:collection/collection.dart';
+
+import '../common.dart';
 
 void main() {
   final lines = File('./bin/Day 4/input.txt').readAsLinesSync();
 
-  print(lines.map(getNumbers).map((e) => getPoints(e.$1, e.$2)).sum);
+  print(lines.map(getNumbers).zippedMap(getPoints).sum);
 
-  print(getNumberOfScratchards(lines));
+  print(getNumberOfScratchcards(lines));
 }
 
 (Set<String> winning, Set<String> owned) getNumbers(String card) {
@@ -28,10 +31,9 @@ int getNumMatchingNumbers(Set<String> winning, Set<String> owned) {
   return winning.intersection(owned).length;
 }
 
-int getNumberOfScratchards(List<String> lines) {
+int getNumberOfScratchcards(List<String> lines) {
   final copies = List.filled(lines.length, 1);
-  final points =
-      lines.map(getNumbers).map((e) => getNumMatchingNumbers(e.$1, e.$2));
+  final points = lines.map(getNumbers).zippedMap(getNumMatchingNumbers);
   for (final (i, point) in points.indexed) {
     for (int j = 1; j <= point && i + j < copies.length; ++j) {
       copies[i + j] += copies[i];

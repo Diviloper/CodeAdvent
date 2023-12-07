@@ -2,12 +2,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 
-Iterable<int> naturals() sync* {
-  int i = 0;
-  while (true) {
-    yield i++;
-  }
-}
+import '../common.dart';
 
 class CategoryMap {
   final List<(int, int, int)> ranges = [];
