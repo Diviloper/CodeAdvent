@@ -15,9 +15,8 @@ void main() {
 }
 
 Portal processNode(String source) {
-  final re = RegExp(r'^(?<id>\w{3}) = \((?<l>\w{3}), (?<r>\w{3})\)$');
-  final m = re.firstMatch(source)!;
-  return (m.namedGroup('id')!, (m.namedGroup('l')!, m.namedGroup('r')!));
+  final match = RegExp(r'^(\w{3}) = \((\w{3}), (\w{3})\)$').firstMatch(source)!;
+  return (match[1]!, (match[2]!, match[3]!));
 }
 
 int getNumSteps(PortalMap portals, List<String> instructions) {
