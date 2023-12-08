@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 
+// ----------------------------------Position-----------------------------------
+
 typedef Position = (int row, int col);
 
 extension PositionExtended on Position {
@@ -26,9 +28,21 @@ extension PositionExtended on Position {
   }
 }
 
+// -----------------------Utils for int and Iterable<int>-----------------------
+
+extension IntExtension on int {
+  int lcm(int other) => this * other ~/ gcd(other);
+}
+
 extension IntIterable on Iterable<int> {
   int get prod => fold(1, (value, element) => value * element);
+
+  int get gcd => reduce((value, element) => value.gcd(element));
+
+  int get lcm => reduce((value, element) => value.lcm(element));
 }
+
+// -----------------------------Utils for Iterables-----------------------------
 
 extension Counter<T> on Iterable<T> {
   Map<T, int> get count {
@@ -37,6 +51,18 @@ extension Counter<T> on Iterable<T> {
       counts[element] = (counts[element] ?? 0) + 1;
     }
     return counts;
+  }
+}
+
+// -----------------------Utils for Iterables of Records------------------------
+
+extension Mapper<F, S> on Iterable<(F, S)> {
+  Map<F, S> toMap() {
+    final map = <F, S>{};
+    for (final (key, value) in this) {
+      map[key] = value;
+    }
+    return map;
   }
 }
 
@@ -52,9 +78,21 @@ extension Zipper<F, S> on Iterable<(F, S)> {
   Iterable<S> get seconds => zippedMap((first, second) => second);
 }
 
+// ---------------------------------Generators----------------------------------
+
 Iterable<int> naturals() sync* {
   int i = 0;
   while (true) {
     yield i++;
+  }
+}
+
+extension InfiniteIterable<T> on Iterable<T> {
+  Iterable<T> get infinite sync* {
+    while (true) {
+      for (final e in this) {
+        yield e;
+      }
+    }
   }
 }
