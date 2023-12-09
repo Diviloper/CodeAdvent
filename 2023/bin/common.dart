@@ -40,6 +40,13 @@ extension IntIterable on Iterable<int> {
   int get gcd => reduce((value, element) => value.gcd(element));
 
   int get lcm => reduce((value, element) => value.lcm(element));
+
+  bool get isAllZeroes => every((element) => element == 0);
+}
+
+extension IntList on List<int> {
+  List<int> get differences =>
+      List.generate(length - 1, (index) => this[index + 1] - this[index]);
 }
 
 // -----------------------------Utils for Iterables-----------------------------
