@@ -16,6 +16,17 @@ extension PositionExtended on Position {
     yield (this.$1 + 1, this.$2 + 1);
   }
 
+  Position get east => (this.$1, this.$2 + 1);
+
+  Position get west => (this.$1, this.$2 - 1);
+
+  Position get north => (this.$1 - 1, this.$2);
+
+  Position get south => (this.$1 + 1, this.$2);
+
+  Position operator -(Position other) =>
+      (this.$1 - other.$1, this.$2 - other.$2);
+
   bool isAdjacent(Position other) => neighbors.any((e) => e == other);
 
   bool isAdjacentColumnRange(int row, int colStart, int colEnd) {
@@ -79,6 +90,14 @@ Iterable<(F, S)> zip<F, S>(Iterable<F> first, Iterable<S> second) =>
 extension Zipper<F, S> on Iterable<(F, S)> {
   Iterable<T> zippedMap<T>(T Function(F first, S second) toElement) =>
       map((e) => toElement(e.$1, e.$2));
+
+  Iterable<(F, S)> zippedWhere(bool Function(F first, S second) test) =>
+      where((e) => test(e.$1, e.$2));
+
+  Iterable<T> zippedExpand<T>(
+    Iterable<T> Function(F first, S second) toElements,
+  ) =>
+      expand((element) => toElements(element.$1, element.$2));
 
   Iterable<F> get firsts => zippedMap((first, second) => first);
 
