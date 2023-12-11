@@ -37,7 +37,14 @@ extension PositionExtended on Position {
     }
     return false;
   }
+
+  int manhattanDistance(Position other) {
+    final diff = this - other;
+    return diff.$1.abs() + diff.$2.abs();
+  }
 }
+
+int manhattanDistance(Position from, Position to) => from.manhattanDistance(to);
 
 // -----------------------Utils for int and Iterable<int>-----------------------
 
@@ -72,6 +79,16 @@ extension Counter<T> on Iterable<T> {
   }
 }
 
+extension Crosser<T> on List<T> {
+  Iterable<(T, T)> triangularProduct([bool includeSelf = false]) sync* {
+    for (int i = 0; i < length; ++i) {
+      for (int j = i + (includeSelf ? 1 : 0); j < length; ++j) {
+        yield (this[i], this[j]);
+      }
+    }
+  }
+}
+
 // -----------------------Utils for Iterables of Records------------------------
 
 extension Mapper<F, S> on Iterable<(F, S)> {
@@ -81,6 +98,17 @@ extension Mapper<F, S> on Iterable<(F, S)> {
       map[key] = value;
     }
     return map;
+  }
+}
+
+Iterable<(F, S)> crossProduct<F, S>(
+  Iterable<F> first,
+  Iterable<S> second,
+) sync* {
+  for (final f in first) {
+    for (final s in second) {
+      yield (f, s);
+    }
   }
 }
 
