@@ -48,6 +48,8 @@ int manhattanDistance(Position from, Position to) => from.manhattanDistance(to);
 
 // -----------------------Utils for int and Iterable<int>-----------------------
 
+Iterable<int> range(int to) => Iterable.generate(to, (i) => i);
+
 extension IntExtension on int {
   int lcm(int other) => this * other ~/ gcd(other);
 }
@@ -82,7 +84,7 @@ extension Counter<T> on Iterable<T> {
 extension Crosser<T> on List<T> {
   Iterable<(T, T)> triangularProduct([bool includeSelf = false]) sync* {
     for (int i = 0; i < length; ++i) {
-      for (int j = i + (includeSelf ? 1 : 0); j < length; ++j) {
+      for (int j = i + (includeSelf ? 0 : 1); j < length; ++j) {
         yield (this[i], this[j]);
       }
     }
@@ -94,6 +96,15 @@ extension Printer<T> on Iterable<T> {
         print(e);
         return e;
       });
+}
+
+extension Transposer<T> on List<List<T>> {
+  List<List<T>> transpose() => [
+        for (int i = 0; i < this[0].length; ++i)
+          [
+            for (int j = 0; j < length; ++j) this[j][i],
+          ]
+      ];
 }
 
 // -----------------------Utils for Iterables of Records------------------------
