@@ -89,6 +89,13 @@ extension Crosser<T> on List<T> {
   }
 }
 
+extension Printer<T> on Iterable<T> {
+  Iterable<T> get printAll => map((e) {
+        print(e);
+        return e;
+      });
+}
+
 // -----------------------Utils for Iterables of Records------------------------
 
 extension Mapper<F, S> on Iterable<(F, S)> {
