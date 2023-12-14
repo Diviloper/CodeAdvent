@@ -105,6 +105,25 @@ extension Transposer<T> on List<List<T>> {
             for (int j = 0; j < length; ++j) this[j][i],
           ]
       ];
+
+  List<List<T>> rotate() {
+    final rotated = [
+      for (final row in this) [for (final value in row) value]
+    ];
+    final n = length;
+    final x = (n / 2).floor();
+    final y = n - 1;
+    for (int i = 0; i < x; i++) {
+      for (int j = i; j < y - i; j++) {
+        final k = this[i][j];
+        rotated[i][j] = this[y - j][i];
+        rotated[y - j][i] = this[y - i][y - j];
+        rotated[y - i][y - j] = this[j][y - i];
+        rotated[j][y - i] = k;
+      }
+    }
+    return rotated;
+  }
 }
 
 // -----------------------Utils for Iterables of Records------------------------
