@@ -4,6 +4,8 @@ import 'package:collection/collection.dart';
 
 import '../common.dart';
 
+Map<String, int> memory = {};
+
 void main() {
   final input = File('./bin/Day 12/input.txt')
       .readAsLinesSync()
@@ -13,63 +15,61 @@ void main() {
           (springs.split(''), groups.split(',').map(int.parse).toList()))
       .toList();
 
-  print(input.zippedMap(getPossibleArrangements).sum);
+  print(input
+      .zippedMap((first, second) => (first + ['.'], second))
+      .zippedMap(getPossibleArrangements)
+      .sum);
 
   print(input
       .zippedMap((first, second) => (
-            first + first + first + first + first,
+            first +
+                ['?'] +
+                first +
+                ['?'] +
+                first +
+                ['?'] +
+                first +
+                ['?'] +
+                first +
+                ['.'],
             second + second + second + second + second
           ))
       .zippedMap(getPossibleArrangements)
-      .printAll
       .sum);
 }
 
 int getPossibleArrangements(List<String> springs, List<int> damagedGroups) {
-  return getPossibleArrangementsRecursive(springs, damagedGroups, 0);
-}
-
-int getPossibleArrangementsRecursive(
-    List<String> springs, List<int> damagedGroups, int index) {
-  if (index == springs.length) {
-    return matchesPrefix(springs, damagedGroups) ? 1 : 0;
+  if (damagedGroups.isEmpty) {
+    return springs.any((element) => element == '#') ? 0 : 1;
   }
-  if (springs[index] != '?') {
-    return getPossibleArrangementsRecursive(springs, damagedGroups, index + 1);
+  if (damagedGroups.sum + damagedGroups.length - 1 > springs.length) return 0;
+
+  final key = "${springs.join()}|${damagedGroups.join(',')}";
+  if (memory.containsKey(key)) {
+    return memory[key]!;
   }
 
-  springs[index] = '.';
-  final functional = matchesPrefix(springs, damagedGroups)
-      ? getPossibleArrangementsRecursive(springs, damagedGroups, index + 1)
-      : 0;
-  springs[index] = '#';
-  final damaged = matchesPrefix(springs, damagedGroups)
-      ? getPossibleArrangementsRecursive(springs, damagedGroups, index + 1)
-      : 0;
-  springs[index] = '?';
-  return functional + damaged;
-}
-
-bool matches(List<String> springs, List<int> damagedGroups) {
-  final groups = springs
-      .join()
-      .split('.')
-      .where((element) => element.isNotEmpty)
-      .map((e) => e.length)
-      .toList();
-  return ListEquality().equals(groups, damagedGroups);
-}
-
-bool matchesPrefix(List<String> springs, List<int> damagedGroups) {
-  final springString = springs.join();
-  final pattern = damagedGroups.map((e) => "[?#]{$e}").join(r"[.?]+");
-  final regexp = RegExp("^[.?]*$pattern[.?]*\$");
-  return regexp.hasMatch(springString);
-}
-
-int allMatches(List<String> springs, List<int> damagedGroups) {
-  final springString = springs.join();
-  final pattern = damagedGroups.map((e) => "[?#]{$e}").join(r"[.?]+");
-  final regexp = RegExp("(?=(^[.?]*$pattern[.?]*\$))");
-  return regexp.allMatches(springString).length;
+  if (springs.first == '.') {
+    final v = getPossibleArrangements(springs.sublist(1), damagedGroups);
+    memory[key] = v;
+    return v;
+  } else if (springs.first == '#') {
+    final group = damagedGroups.first;
+    if (springs.take(group).every((e) => e == '#' || e == '?') &&
+        (springs[group] == '.' || springs[group] == '?')) {
+      final v = getPossibleArrangements(
+          springs.sublist(group + 1), damagedGroups.sublist(1));
+      memory[key] = v;
+      return v;
+    } else {
+      memory[key] = 0;
+      return 0;
+    }
+  } else {
+    final dot = getPossibleArrangements(springs.sublist(1), damagedGroups);
+    final hash =
+        getPossibleArrangements(springs.copy()..[0] = '#', damagedGroups);
+    memory[key] = dot + hash;
+    return dot + hash;
+  }
 }
