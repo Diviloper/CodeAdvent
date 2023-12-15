@@ -71,6 +71,10 @@ extension IntList on List<int> {
 
 // -----------------------------Utils for Iterables-----------------------------
 
+extension Copier<T> on List<T> {
+  List<T> copy() => [for (final v in this) v];
+}
+
 extension Counter<T> on Iterable<T> {
   Map<T, int> get count {
     final counts = <T, int>{};
@@ -91,11 +95,15 @@ extension Crosser<T> on List<T> {
   }
 }
 
-extension Printer<T> on Iterable<T> {
-  Iterable<T> get printAll => map((e) {
-        print(e);
+extension Applier<T> on Iterable<T> {
+  Iterable<T> forEachThrough(void Function(T) func) => map((e) {
+        func(e);
         return e;
       });
+}
+
+extension Printer<T> on Iterable<T> {
+  Iterable<T> get printAll => forEachThrough(print);
 }
 
 extension Transposer<T> on List<List<T>> {
