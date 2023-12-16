@@ -4,6 +4,17 @@ import 'package:collection/collection.dart';
 
 typedef Position = (int row, int col);
 
+enum Direction {
+  right,
+  up,
+  left,
+  down;
+
+  bool get isHorizontal => this == Direction.left || this == Direction.right;
+
+  bool get isVertical => this == Direction.up || this == Direction.down;
+}
+
 extension PositionExtended on Position {
   Iterable<Position> get neighbors sync* {
     yield (this.$1 - 1, this.$2 - 1);
@@ -16,6 +27,12 @@ extension PositionExtended on Position {
     yield (this.$1 + 1, this.$2 + 1);
   }
 
+  int get row => this.$1;
+
+  int get col => this.$2;
+
+  int get column => this.$2;
+
   Position get east => (this.$1, this.$2 + 1);
 
   Position get west => (this.$1, this.$2 - 1);
@@ -23,6 +40,19 @@ extension PositionExtended on Position {
   Position get north => (this.$1 - 1, this.$2);
 
   Position get south => (this.$1 + 1, this.$2);
+
+  Position move(Direction direction) {
+    switch (direction) {
+      case Direction.right:
+        return east;
+      case Direction.up:
+        return north;
+      case Direction.left:
+        return west;
+      case Direction.down:
+        return south;
+    }
+  }
 
   Position operator -(Position other) =>
       (this.$1 - other.$1, this.$2 - other.$2);
@@ -41,6 +71,13 @@ extension PositionExtended on Position {
   int manhattanDistance(Position other) {
     final diff = this - other;
     return diff.$1.abs() + diff.$2.abs();
+  }
+
+  bool isOutOfBounds(List<List<dynamic>> matrix) {
+    return row < 0 ||
+        row >= matrix.length ||
+        col < 0 ||
+        col >= matrix[row].length;
   }
 }
 
