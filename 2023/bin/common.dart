@@ -13,6 +13,10 @@ enum Direction {
   bool get isHorizontal => this == Direction.left || this == Direction.right;
 
   bool get isVertical => this == Direction.up || this == Direction.down;
+
+  List<Direction> get perpendicular => isHorizontal
+      ? [Direction.up, Direction.down]
+      : [Direction.left, Direction.right];
 }
 
 extension PositionExtended on Position {
