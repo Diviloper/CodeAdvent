@@ -38,6 +38,7 @@ extension PositionExtended on Position {
     yield (this.$1 + 1, this.$2);
     yield (this.$1 + 1, this.$2 + 1);
   }
+
   Iterable<Position> get neighbors4 sync* {
     yield (this.$1 - 1, this.$2);
     yield (this.$1, this.$2 - 1);
@@ -59,18 +60,12 @@ extension PositionExtended on Position {
 
   Position get south => (this.$1 + 1, this.$2);
 
-  Position move(Direction direction) {
-    switch (direction) {
-      case Direction.right:
-        return east;
-      case Direction.up:
-        return north;
-      case Direction.left:
-        return west;
-      case Direction.down:
-        return south;
-    }
-  }
+  Position move(Direction direction, [int steps = 1]) => switch (direction) {
+        Direction.right => (this.$1, this.$2 + steps),
+        Direction.up => (this.$1 - steps, this.$2),
+        Direction.left => (this.$1, this.$2 - steps),
+        Direction.down => (this.$1 + steps, this.$2)
+      };
 
   Position operator -(Position other) =>
       (this.$1 - other.$1, this.$2 - other.$2);
