@@ -17,10 +17,18 @@ enum Direction {
   List<Direction> get perpendicular => isHorizontal
       ? [Direction.up, Direction.down]
       : [Direction.left, Direction.right];
+
+  static Direction fromString(String source) => switch (source.toLowerCase()) {
+        "r" => Direction.right,
+        "u" => Direction.up,
+        "l" => Direction.left,
+        "d" => Direction.down,
+        _ => throw ArgumentError.value(source),
+      };
 }
 
 extension PositionExtended on Position {
-  Iterable<Position> get neighbors sync* {
+  Iterable<Position> get neighbors8 sync* {
     yield (this.$1 - 1, this.$2 - 1);
     yield (this.$1 - 1, this.$2);
     yield (this.$1 - 1, this.$2 + 1);
@@ -29,6 +37,12 @@ extension PositionExtended on Position {
     yield (this.$1 + 1, this.$2 - 1);
     yield (this.$1 + 1, this.$2);
     yield (this.$1 + 1, this.$2 + 1);
+  }
+  Iterable<Position> get neighbors4 sync* {
+    yield (this.$1 - 1, this.$2);
+    yield (this.$1, this.$2 - 1);
+    yield (this.$1, this.$2 + 1);
+    yield (this.$1 + 1, this.$2);
   }
 
   int get row => this.$1;
@@ -61,7 +75,7 @@ extension PositionExtended on Position {
   Position operator -(Position other) =>
       (this.$1 - other.$1, this.$2 - other.$2);
 
-  bool isAdjacent(Position other) => neighbors.any((e) => e == other);
+  bool isAdjacent(Position other) => neighbors8.any((e) => e == other);
 
   bool isAdjacentColumnRange(int row, int colStart, int colEnd) {
     for (int numCol = colStart; numCol <= colEnd; ++numCol) {
