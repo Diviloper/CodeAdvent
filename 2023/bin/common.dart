@@ -121,6 +121,10 @@ extension IntList on List<int> {
 
 // -----------------------------Utils for Iterables-----------------------------
 
+extension MapGenerator<T> on Iterable<T> {
+  Map<K, T> toMap<K>(K Function(T) key) => {for (final v in this) key(v): v};
+}
+
 extension Copier<T> on List<T> {
   List<T> copy() => [for (final v in this) v];
 }
