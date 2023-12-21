@@ -31,10 +31,9 @@ int getPlotsReachableInSteps(List<List<String>> map, int steps, Position start,
   for (int i = 0; i <= steps; ++i) {
     while (nextPositions.isNotEmpty) {
       final (current, isEven) = nextPositions.removeFirst();
-      if ((!endless && current.isOutOfBounds(map)) ||
-          map[current.row % map.length]
-                  [current.col % map[current.row % map.length].length] ==
-              '#') {
+      final row = current.row % map.length;
+      final col = current.col % map[row].length;
+      if ((!endless && current.isOutOfBounds(map)) || map[row][col] == '#') {
         continue;
       }
       final set = isEven ? even : odd;
@@ -42,8 +41,7 @@ int getPlotsReachableInSteps(List<List<String>> map, int steps, Position start,
       set.add(current);
       futurePositions.addAll(current.neighbors4
           .map((e) => (e, !isEven))
-          .zippedWhere(
-              (pos, eve) => eve ? !even.contains(pos) : !odd.contains(pos)));
+          .zippedWhere((pos, eve) => !(eve ? even : odd).contains(pos)));
     }
     nextPositions.addAll(futurePositions);
     futurePositions.clear();
