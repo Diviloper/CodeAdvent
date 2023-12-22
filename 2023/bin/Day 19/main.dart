@@ -85,7 +85,7 @@ void main() {
   final workflows = worklowInput
       .split('\n')
       .map(Workflow.fromString)
-      .toMap((part) => part.id);
+      .toMapWithKey((part) => part.id);
   final parts = partInput.split('\n').map(Part.fromString).toList();
 
   print(parts.where((part) => accepted(part, workflows)).map((p) => p.sum).sum);

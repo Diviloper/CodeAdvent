@@ -119,10 +119,26 @@ extension IntList on List<int> {
       List.generate(length - 1, (index) => this[index + 1] - this[index]);
 }
 
+extension RecordProd on (int, int) {
+  int get prod => $1 * $2;
+}
+
 // -----------------------------Utils for Iterables-----------------------------
 
 extension MapGenerator<T> on Iterable<T> {
-  Map<K, T> toMap<K>(K Function(T) key) => {for (final v in this) key(v): v};
+  Map<K, T> toMapWithKey<K>(K Function(T) key) =>
+      {for (final v in this) key(v): v};
+
+  Map<T, V> toMapWithValue<V>(V Function(T) value) =>
+      {for (final k in this) k: value(k)};
+}
+
+extension MapIterator<K, V> on Map<K, V> {
+  Iterable<(K, V)> get records sync* {
+    for (final entry in entries) {
+      yield (entry.key, entry.value);
+    }
+  }
 }
 
 extension Copier<T> on List<T> {
