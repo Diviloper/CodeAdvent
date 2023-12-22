@@ -245,6 +245,8 @@ extension Zipper<F, S> on Iterable<(F, S)> {
   Iterable<F> get firsts => zippedMap((first, second) => first);
 
   Iterable<S> get seconds => zippedMap((first, second) => second);
+
+  Iterable<(S, F)> get swap => zippedMap((first, second) => (second, first));
 }
 
 // ---------------------------------Generators----------------------------------
