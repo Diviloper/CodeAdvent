@@ -1,4 +1,6 @@
+import 'dart:collection';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 
@@ -24,7 +26,8 @@ void main() {
       map[i][j] = map[i][j] == '#' ? '#' : '.';
     }
   }
-  print(getLongestPath(map, start, end, {}));
+
+  print(getLongestPathGraph(fillGraph(map), start, end));
 }
 
 int getLongestPath(List<List<String>> map, Position start, Position end,
@@ -70,4 +73,89 @@ bool validMove(List<List<String>> map, Position from, Position to) {
     '^' => to - from == (-1, 0),
     _ => throw ArgumentError.value(cell),
   };
+}
+
+Set<Position> getIntersections(List<List<String>> map) {
+  Iterable<Position> intersectionsGenerator(List<List<String>> map) sync* {
+    for (int i = 0; i < map.length; ++i) {
+      for (int j = 0; j < map.length; ++j) {
+        if (map[i][j] == '#') continue;
+        final pathNeighbors = (i, j)
+            .neighbors4
+            .where((element) => !element.isOutOfBounds(map))
+            .zippedWhere((row, col) => map[row][col] != '#')
+            .length;
+        if (pathNeighbors > 2) yield (i, j);
+      }
+    }
+  }
+
+  return intersectionsGenerator(map).toSet();
+}
+
+Map<Position, Map<Position, int>> fillGraph(List<List<String>> map) {
+  final start = (
+    0,
+    map.first.indexed.firstWhere((element) => element.$2 == '.').$1,
+  );
+  final end = (
+    map.length - 1,
+    map.last.indexed.firstWhere((element) => element.$2 == '.').$1,
+  );
+  final intersections = getIntersections(map);
+  intersections
+    ..add(start)
+    ..add(end);
+
+  return intersections.toMapWithValue(
+      (key) => getDistanceToConnectedIntersections(map, intersections, key));
+}
+
+Map<Position, int> getDistanceToConnectedIntersections(
+  List<List<String>> map,
+  Set<Position> intersections,
+  Position origin,
+) {
+  final subgraph = <Position, int>{};
+  final visited = <Position>{origin};
+  final nextPositions = Queue<(Position, int)>.of(origin.neighbors4
+      .where((element) => validMove(map, origin, element))
+      .map((e) => (e, 1)));
+  while (nextPositions.isNotEmpty) {
+    final (currentPosition, steps) = nextPositions.removeFirst();
+    visited.add(currentPosition);
+    if (intersections.contains(currentPosition)) {
+      subgraph[currentPosition] = steps;
+      continue;
+    }
+    final neighbors = currentPosition.neighbors4
+        .whereNot(visited.contains)
+        .where((element) => validMove(map, currentPosition, element))
+        .map((e) => (e, steps + 1));
+    nextPositions.addAll(neighbors);
+  }
+  return subgraph;
+}
+
+int getLongestPathGraph(
+  Map<Position, Map<Position, int>> graph,
+  Position start,
+  Position end,
+) {
+  final currentPaths =
+      Queue<(Position, Set<Position>, int)>.of([(start, {}, 0)]);
+  int maxPath = 0;
+  while (currentPaths.isNotEmpty) {
+    final (currentPosition, visited, distance) = currentPaths.removeFirst();
+    if (currentPosition == end) {
+      maxPath = max(maxPath, distance);
+      continue;
+    }
+    currentPaths.addAll(graph[currentPosition]!
+        .records
+        .zippedWhere((next, _) => !visited.contains(next))
+        .zippedMap((next, dist) =>
+            (next, Set.of(visited)..add(currentPosition), distance + dist)));
+  }
+  return maxPath;
 }
