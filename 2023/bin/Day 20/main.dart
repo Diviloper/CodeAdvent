@@ -92,7 +92,7 @@ class ConjunctionModule extends Module {
   }
 
   @override
-  String get state => '$name: $memory';
+  String get state => '$name: ${memory.values.every((e) => e)} $memory';
 
   @override
   String toString() {
@@ -129,6 +129,7 @@ void main() {
 
   print(Iterable.generate(1000)
       .map((_) => pushButton(modules))
+      .map((e) => (e.$1, e.$2))
       .reduce(
           (value, element) => (value.$1 + element.$1, value.$2 + element.$2))
       .prod);
@@ -138,34 +139,34 @@ void main() {
   }
 
   final inputs = modules['kj']!.inputs;
+  final targetPulses = inputs.map((e) => (e, 'kj', true)).toList();
   final nums = <int>[];
-  for (int i = 1; inputs.isNotEmpty; ++i) {
-    pushButton(modules);
-    for (final input in inputs.copy()) {
-      final module = modules[input] as ConjunctionModule;
-      if (module.memory.values.any((element) => !element)) {
-        inputs.remove(input);
-        nums.add(i);
-      }
+  for (int presses = 1; targetPulses.isNotEmpty; ++presses) {
+    final (_, _, seenPulses) = pushButton(modules, targetPulses);
+    for (final i in seenPulses.indexed.where((seen) => seen.$2).firsts) {
+      targetPulses.removeAt(i);
+      nums.add(presses);
     }
   }
   print(nums.lcm);
 }
 
-(int, int) pushButton(
+(int, int, List<bool>) pushButton(
   Map<String, Module> modules, [
-  (String, bool)? targetPulse,
+  List<(String, String, bool)> targetPulses = const [],
 ]) {
   int lowPulses = 1;
   int highPulses = 0;
+
+  final seenPulses = List<bool>.filled(targetPulses.length, false);
 
   final unprocessedPulses = Queue<(String, String, bool)>();
   unprocessedPulses.add(('', 'broadcaster', false));
 
   while (unprocessedPulses.isNotEmpty) {
     final (source, destination, pulse) = unprocessedPulses.removeFirst();
-    if ((destination, pulse) == targetPulse) {
-      throw 'PulseFound';
+    if (targetPulses.contains((source, destination, pulse))) {
+      seenPulses[targetPulses.indexOf((source, destination, pulse))] = true;
     }
     if (!modules.containsKey(destination)) continue;
     final newPulses = modules[destination]!.processPulse(pulse, source);
@@ -175,5 +176,5 @@ void main() {
     highPulses += newPulses.seconds.where((element) => element).length;
   }
 
-  return (lowPulses, highPulses);
+  return (lowPulses, highPulses, seenPulses);
 }
