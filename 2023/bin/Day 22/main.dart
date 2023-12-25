@@ -5,11 +5,6 @@ import 'package:collection/collection.dart';
 
 import '../common.dart';
 
-typedef Position3D = ({int x, int y, int z});
-
-Position3D position3DFromList(List<int> source) =>
-    (x: source[0], y: source[1], z: source[2]);
-
 extension on Position3D {
   Position3D drop(int n) => (x: x, y: y, z: z - n);
 }

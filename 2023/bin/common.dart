@@ -96,6 +96,20 @@ extension PositionExtended on Position {
 
 int manhattanDistance(Position from, Position to) => from.manhattanDistance(to);
 
+// ---------------------------------Position3D----------------------------------
+
+typedef Position3D = ({int x, int y, int z});
+
+Position3D position3DFromList(List<int> source) =>
+    (x: source[0], y: source[1], z: source[2]);
+
+extension Position3DFuncs on Position3D {
+  Position3D operator -(Position3D other) =>
+      (x: x - other.x, y: y - other.y, z: z - other.z);
+
+  Position3D operator +(Position3D other) =>
+      (x: x + other.x, y: y + other.y, z: z + other.z);
+}
 // -----------------------Utils for int and Iterable<int>-----------------------
 
 Iterable<int> range(int to) => Iterable.generate(to, (i) => i);
