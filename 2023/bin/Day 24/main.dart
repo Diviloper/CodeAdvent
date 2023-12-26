@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:z3/z3.dart';
+
 import '../common.dart';
 
 typedef SemiLine = ({Position3D start, Position3D direction});
@@ -20,20 +22,28 @@ void main() {
   }
   print(count);
 
-  String system = 'var int: X0;\n'
-      'var int: Xd;\n\n'
-      'var int: Y0;\n'
-      'var int: Yd;\n\n'
-      'var int: Z0;\n'
-      'var int: Zd;\n\n';
-  for (final (i, line) in lines.indexed) {
-    system += getEquation(i, line);
-  }
+  solveZ3(lines);
+}
 
-  system += '\nsolve satisfy;\n\n';
-  system += r'output ["(\(X0),\(Y0),\(Z0)) @ (\(Xd),\(Yd),\(Zd))\n"];' '\n';
-  system += r'output ["\n\(X0 + Y0 + Z0)"];';
-  File('./bin/Day 24/model.txt').writeAsString(system);
+void solveZ3(List<SemiLine> lines) async {
+  final s = solver();
+  final x0 = constVar('X0', intSort);
+  final xd = constVar('Xd', intSort);
+  final y0 = constVar('Y0', intSort);
+  final yd = constVar('Yd', intSort);
+  final z0 = constVar('Z0', intSort);
+  final zd = constVar('Zd', intSort);
+
+  for (final (index, (start: start, direction: dir)) in lines.indexed.take(3)) {
+    final t = constVar('t$index', realSort);
+    s.add(t >= 0);
+    s.add((x0 + t * xd - start.x - t * dir.x).eq(0));
+    s.add((y0 + t * yd - start.y - t * dir.y).eq(0));
+    s.add((z0 + t * zd - start.z - t * dir.z).eq(0));
+  }
+  final model = s.ensureSat();
+  final c = model.evalConst;
+  print('(${c(x0)},${c(y0)},${c(z0)}) @ (${c(xd)},${c(yd)},${c(zd)})');
 }
 
 SemiLine processLine(String line) {
@@ -65,12 +75,4 @@ Line2D get2DLineFormula(Position3D a, Position3D b) {
   final m = (b.y - a.y) / (b.x - a.x);
   final o = a.y - (m * a.x);
   return (slope: m, intercept: o);
-}
-
-String getEquation(int index, SemiLine line) {
-  return 'var int: T$index;\n'
-      'constraint T$index >= 0;\n'
-      'constraint X0 + T$index * Xd == ${line.start.x} + T$index * ${line.direction.x};\n'
-      'constraint Y0 + T$index * Yd == ${line.start.y} + T$index * ${line.direction.y};\n'
-      'constraint Z0 + T$index * Zd == ${line.start.z} + T$index * ${line.direction.z};\n';
 }

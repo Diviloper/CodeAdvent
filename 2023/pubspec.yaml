@@ -6,6 +6,7 @@ environment:
 
 dependencies:
   collection: ^1.18.0
+  z3: ^0.1.0
   # path: ^1.8.0
 
 dev_dependencies:
