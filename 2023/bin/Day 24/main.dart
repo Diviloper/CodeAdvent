@@ -26,7 +26,7 @@ void main() {
 }
 
 void solveZ3(List<SemiLine> lines) async {
-  final s = solver();
+  final s = solver(params: {"threads": 12});
   final x0 = constVar('X0', intSort);
   final xd = constVar('Xd', intSort);
   final y0 = constVar('Y0', intSort);
@@ -35,7 +35,7 @@ void solveZ3(List<SemiLine> lines) async {
   final zd = constVar('Zd', intSort);
 
   for (final (index, (start: start, direction: dir)) in lines.indexed.take(3)) {
-    final t = constVar('t$index', realSort);
+    final t = constVar('t$index', intSort);
     s.add(t >= 0);
     s.add((x0 + t * xd - start.x - t * dir.x).eq(0));
     s.add((y0 + t * yd - start.y - t * dir.y).eq(0));
@@ -44,6 +44,7 @@ void solveZ3(List<SemiLine> lines) async {
   final model = s.ensureSat();
   final c = model.evalConst;
   print('(${c(x0)},${c(y0)},${c(z0)}) @ (${c(xd)},${c(yd)},${c(zd)})');
+  print(model.eval(x0 + y0 + z0));
 }
 
 SemiLine processLine(String line) {
