@@ -34,7 +34,6 @@ extension ListSplitter<T, K> on Iterable<(T, K)> {
   }
 }
 
-
 // Copy
 extension Copy<T> on List<T> {
   List<T> copy() => List<T>.from(this);
