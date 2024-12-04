@@ -34,6 +34,12 @@ extension ListSplitter<T, K> on Iterable<(T, K)> {
   }
 }
 
+// IndexedMap
+extension IndexedMap<T> on Iterable<T> {
+  Iterable<K> indexedMap<K>(K Function(int, T) mapping) =>
+      indexed.map((e) => mapping(e.$1, e.$2));
+}
+
 // Copy
 extension Copy<T> on List<T> {
   List<T> copy() => List<T>.from(this);
