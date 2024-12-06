@@ -44,3 +44,9 @@ extension IndexedMap<T> on Iterable<T> {
 extension Copy<T> on List<T> {
   List<T> copy() => List<T>.from(this);
 }
+
+// OutOfBounds
+extension OutOfBounds<T> on List<List<T>> {
+  bool isOutOfBounds(int i, int j) =>
+      i < 0 || i >= length || j < 0 || j >= this[i].length;
+}
