@@ -34,11 +34,21 @@ extension ListSplitter<T, K> on Iterable<(T, K)> {
   }
 }
 
+extension ZippedMap<T, K> on Iterable<(T, K)> {
+  Iterable<J> zippedMap<J>(J Function(T, K) mapping) =>
+      map((e) => mapping(e.$1, e.$2));
+
+  Iterable<(T, K)> zippedWhere(bool Function(T, K) test) =>
+      where((e) => test(e.$1, e.$2));
+}
+
 // IndexedMap
 extension IndexedMap<T> on Iterable<T> {
   Iterable<K> indexedMap<K>(K Function(int, T) mapping) =>
-      indexed.map((e) => mapping(e.$1, e.$2));
+      indexed.zippedMap(mapping);
 }
+
+//
 
 // Copy
 extension Copy<T> on List<T> {
