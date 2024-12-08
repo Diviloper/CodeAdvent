@@ -55,6 +55,17 @@ extension type Position((int, int) coords) {
 
   Position advance(Direction direction) =>
       Position(direction.advanceFrom(i, j));
+
+  Position operator -(Position other) =>
+      Position.fromCoords(i - other.i, j - other.j);
+
+  Position operator +(Position other) =>
+      Position.fromCoords(i + other.i, j + other.j);
+
+  Position operator *(int factor) =>
+      Position.fromCoords(i * factor, j * factor);
+
+  Position operator -() => Position.fromCoords(-i, -j);
 }
 
 extension Accessor<T> on List<List<T>> {
