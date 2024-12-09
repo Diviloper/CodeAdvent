@@ -17,7 +17,24 @@ extension CountableIterable<T> on Iterable<T> {
 }
 
 // Splitter
-extension ListSplitter<T, K> on Iterable<(T, K)> {
+extension ListSplitter<T> on Iterable<T> {
+  (List<T>, List<T>) unzip() {
+    final left = <T>[];
+    final right = <T>[];
+    bool l = true;
+    for (final e in this) {
+      if (l) {
+        left.add(e);
+      } else {
+        right.add(e);
+      }
+      l = !l;
+    }
+    return (left, right);
+  }
+}
+
+extension ListUnzipper<T, K> on Iterable<(T, K)> {
   Iterable<T> get firsts => map((e) => e.$1);
 
   Iterable<K> get seconds => map((e) => e.$2);
@@ -48,7 +65,11 @@ extension IndexedMap<T> on Iterable<T> {
       indexed.zippedMap(mapping);
 }
 
-//
+// Accessor
+extension ListAccessor<T> on List<T> {
+  T at(int index, T defaultValue) =>
+      (index >= 0 && index < length) ? this[index] : defaultValue;
+}
 
 // Copy
 extension Copy<T> on List<T> {
