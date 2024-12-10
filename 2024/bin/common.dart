@@ -57,12 +57,18 @@ extension ZippedMap<T, K> on Iterable<(T, K)> {
 
   Iterable<(T, K)> zippedWhere(bool Function(T, K) test) =>
       where((e) => test(e.$1, e.$2));
+
+  Iterable<J> zippedExpand<J>(Iterable<J> Function(T, K) mapping) =>
+      expand((e) => mapping(e.$1, e.$2));
 }
 
 // IndexedMap
 extension IndexedMap<T> on Iterable<T> {
   Iterable<K> indexedMap<K>(K Function(int, T) mapping) =>
       indexed.zippedMap(mapping);
+
+  Iterable<K> indexedExpand<K>(Iterable<K> Function(int, T) mapping) =>
+      indexed.zippedExpand(mapping);
 }
 
 // Accessor
@@ -80,4 +86,12 @@ extension Copy<T> on List<T> {
 extension OutOfBounds<T> on List<List<T>> {
   bool isOutOfBounds(int i, int j) =>
       i < 0 || i >= length || j < 0 || j >= this[i].length;
+}
+
+// Printable
+extension IterablePrinter<T> on Iterable<T> {
+  Iterable<T> printIterable() => map((e) {
+        print(e);
+        return e;
+      });
 }
