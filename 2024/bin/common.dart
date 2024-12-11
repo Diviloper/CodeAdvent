@@ -95,3 +95,8 @@ extension IterablePrinter<T> on Iterable<T> {
         return e;
       });
 }
+
+// Num of digits
+extension NumDigits on int {
+  int get numDigits => toString().length;
+}
