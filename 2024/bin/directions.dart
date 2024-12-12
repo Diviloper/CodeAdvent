@@ -17,6 +17,19 @@ enum Direction {
     }
   }
 
+  Direction turnLeft() {
+    switch (this) {
+      case Direction.up:
+        return Direction.left;
+      case Direction.down:
+        return Direction.right;
+      case Direction.left:
+        return Direction.down;
+      case Direction.right:
+        return Direction.up;
+    }
+  }
+
   static Direction fromString(String source) {
     switch (source) {
       case '^':
