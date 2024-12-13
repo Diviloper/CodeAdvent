@@ -5,6 +5,7 @@ environment:
   sdk: ^3.5.0
 
 dependencies:
+  cassowary: ^0.4.3
   collection: ^1.19.1
 
 dev_dependencies:
