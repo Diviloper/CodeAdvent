@@ -100,3 +100,32 @@ extension IterablePrinter<T> on Iterable<T> {
 extension NumDigits on int {
   int get numDigits => toString().length;
 }
+
+// ToMap
+extension IterableToMap<K, V> on Iterable<(K, V)> {
+  Map<K, V> toMap() {
+    final m = <K, V>{};
+    for (final (k, v) in this) {
+      m[k] = v;
+    }
+    return m;
+  }
+
+  Map<K, List<V>> toMapGroup() {
+    final m = <K, List<V>>{};
+    for (final (k, v) in this) {
+      if (!m.containsKey(k)) m[k] = <V>[];
+      m[k]!.add(v);
+    }
+    return m;
+  }
+}
+
+// ToRecords
+extension MapToRecords<K, V> on Map<K, V> {
+  Iterable<(K, V)> toRecords() sync* {
+    for (final k in keys) {
+      yield (k, this[k]!);
+    }
+  }
+}

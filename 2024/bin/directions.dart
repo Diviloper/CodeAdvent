@@ -87,3 +87,14 @@ extension Accessor<T> on List<List<T>> {
   bool outOfBoundsPos(Position p) =>
       p.i < 0 || p.i >= length || p.j < 0 || p.j >= this[p.i].length;
 }
+
+extension PositionOps<T> on List<List<T>> {
+  Iterable<Position> positionsWhere(bool Function(Position) test) sync* {
+    for (int i = 0; i < length; ++i) {
+      for (int j = 0; j < this[i].length; ++j) {
+        final pos = Position.fromCoords(i, j);
+        if (test(pos)) yield pos;
+      }
+    }
+  }
+}
