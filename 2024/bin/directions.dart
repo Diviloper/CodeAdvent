@@ -5,44 +5,50 @@ enum Direction {
   right;
 
   Direction turnRight() {
-    switch (this) {
-      case Direction.up:
-        return Direction.right;
-      case Direction.down:
-        return Direction.left;
-      case Direction.left:
-        return Direction.up;
-      case Direction.right:
-        return Direction.down;
-    }
+    return switch (this) {
+      Direction.up => Direction.right,
+      Direction.down => Direction.left,
+      Direction.left => Direction.up,
+      Direction.right => Direction.down
+    };
   }
 
   Direction turnLeft() {
-    switch (this) {
-      case Direction.up:
-        return Direction.left;
-      case Direction.down:
-        return Direction.right;
-      case Direction.left:
-        return Direction.down;
-      case Direction.right:
-        return Direction.up;
-    }
+    return switch (this) {
+      Direction.up => Direction.left,
+      Direction.down => Direction.right,
+      Direction.left => Direction.down,
+      Direction.right => Direction.up
+    };
+  }
+
+  operator -() {
+    return switch (this) {
+      Direction.up => Direction.down,
+      Direction.down => Direction.up,
+      Direction.left => Direction.right,
+      Direction.right => Direction.left
+    };
   }
 
   static Direction fromString(String source) {
-    switch (source) {
-      case '^':
-        return Direction.up;
-      case '>':
-        return Direction.right;
-      case 'v':
-        return Direction.down;
-      case '<':
-        return Direction.left;
-      default:
-        throw Exception("Invalid string representation");
-    }
+    return switch (source) {
+      '^' => Direction.up,
+      '>' => Direction.right,
+      'v' => Direction.down,
+      '<' => Direction.left,
+      _ => throw Exception("Invalid string representation")
+    };
+  }
+
+  @override
+  String toString() {
+    return switch (this) {
+      Direction.up => "^",
+      Direction.down => "v",
+      Direction.left => "<",
+      Direction.right => ">",
+    };
   }
 
   (int, int) advanceFrom(int i, int j) {
@@ -89,6 +95,15 @@ extension Accessor<T> on List<List<T>> {
 }
 
 extension PositionOps<T> on List<List<T>> {
+  Iterable<Position> positions() sync* {
+    for (int i = 0; i < length; ++i) {
+      for (int j = 0; j < this[i].length; ++j) {
+        final pos = Position.fromCoords(i, j);
+        yield pos;
+      }
+    }
+  }
+
   Iterable<Position> positionsWhere(bool Function(Position) test) sync* {
     for (int i = 0; i < length; ++i) {
       for (int j = 0; j < this[i].length; ++j) {
