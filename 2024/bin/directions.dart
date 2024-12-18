@@ -72,6 +72,9 @@ extension type Position((int, int) coords) {
 
   int get j => coords.$2;
 
+  int manhattanDistance(Position other) =>
+      (i - other.i).abs() + (j - other.j).abs();
+
   Position advance(Direction direction) =>
       Position(direction.advanceFrom(i, j));
 
@@ -85,6 +88,9 @@ extension type Position((int, int) coords) {
       Position.fromCoords(i * factor, j * factor);
 
   Position operator -() => Position.fromCoords(-i, -j);
+
+  bool outOfBounds(int minX, int minY, int maxX, int maxY) =>
+      i < minX || i >= maxX || j < minY || j >= maxY;
 }
 
 extension Accessor<T> on List<List<T>> {
