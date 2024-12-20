@@ -96,6 +96,8 @@ extension type Position((int, int) coords) {
 extension Accessor<T> on List<List<T>> {
   T atPosition(Position p) => this[p.i][p.j];
 
+  void setAtPosition(Position p, T value) => this[p.i][p.j] = value;
+
   bool outOfBoundsPos(Position p) =>
       p.i < 0 || p.i >= length || p.j < 0 || p.j >= this[p.i].length;
 }
