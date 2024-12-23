@@ -129,3 +129,9 @@ extension MapToRecords<K, V> on Map<K, V> {
     }
   }
 }
+
+// SetIterable
+extension Union<T> on Iterable<Set<T>> {
+  Set<T> get union => reduce((acc, curr) => acc.union(curr));
+  Set<T> get intersection => reduce((acc, curr) => acc.intersection(curr));
+}
