@@ -79,7 +79,7 @@ extension ListAccessor<T> on List<T> {
 
 // Copy
 extension Copy<T> on List<T> {
-  List<T> copy() => List<T>.from(this);
+  List<T> copy() => List<T>.of(this);
 }
 
 // OutOfBounds
