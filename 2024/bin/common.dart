@@ -16,6 +16,16 @@ extension CountableIterable<T> on Iterable<T> {
   Counter<T> get count => Counter(this);
 }
 
+extension ListZipper<T, K> on Iterable<T> {
+  Iterable<(T, K)> zip(Iterable<K> other) sync* {
+    final iter = other.iterator;
+    for (final i in this) {
+      if (!iter.moveNext()) return;
+      yield (i, iter.current);
+    }
+  }
+}
+
 // Splitter
 extension ListSplitter<T> on Iterable<T> {
   (List<T>, List<T>) unzip() {
@@ -133,5 +143,22 @@ extension MapToRecords<K, V> on Map<K, V> {
 // SetIterable
 extension Union<T> on Iterable<Set<T>> {
   Set<T> get union => reduce((acc, curr) => acc.union(curr));
+
   Set<T> get intersection => reduce((acc, curr) => acc.intersection(curr));
+}
+
+// BoolIterable
+extension BoolIterable on Iterable<bool> {
+  bool get everyTrue => every((t) => t);
+}
+
+// CrossIterable
+extension CrossIterable<T> on Iterable<T> {
+  Iterable<(T, P)> cross<P>(Iterable<P> other) sync* {
+    for (final i in this) {
+      for (final j in other) {
+        yield (i, j);
+      }
+    }
+  }
 }

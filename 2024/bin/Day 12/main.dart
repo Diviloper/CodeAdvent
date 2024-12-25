@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 
-import '../common.dart';
 import '../directions.dart';
 
 void main() {
