@@ -19,7 +19,6 @@ void main() {
   final second = regions.map((region) => area(region) * numSides(region)).sum;
   print(second);
 }
-
 List<List<Position>> findRegions(List<List<String>> map) {
   final seen = <Position>{};
   final regions = <List<Position>>[];

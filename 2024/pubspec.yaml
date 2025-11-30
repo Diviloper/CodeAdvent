@@ -9,5 +9,4 @@ dependencies:
   collection: ^1.19.1
 
 dev_dependencies:
-
   lints: ^5.0.0

@@ -1,0 +1,13 @@
+name: advent_of_code_2025
+description: Advent of Code year 2025
+
+environment:
+  sdk: ^3.10.1
+
+# Add regular dependencies here.
+dependencies:
+  path: ^1.9.0
+  collection: ^1.19.1
+
+dev_dependencies:
+  lints: ^6.0.0
