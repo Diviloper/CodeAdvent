@@ -50,14 +50,11 @@ extension ListUnzipper<T, K> on Iterable<(T, K)> {
   Iterable<K> get seconds => map((e) => e.$2);
 
   (List<T>, List<K>) unzip() {
-    return fold(
-      ([], []),
-      (acc, record) {
-        acc.$1.add(record.$1);
-        acc.$2.add(record.$2);
-        return acc;
-      },
-    );
+    return fold(([], []), (acc, record) {
+      acc.$1.add(record.$1);
+      acc.$2.add(record.$2);
+      return acc;
+    });
   }
 }
 
@@ -101,9 +98,9 @@ extension OutOfBounds<T> on List<List<T>> {
 // Printable
 extension IterablePrinter<T> on Iterable<T> {
   Iterable<T> printIterable() => map((e) {
-        print(e);
-        return e;
-      });
+    print(e);
+    return e;
+  });
 }
 
 // Num of digits
