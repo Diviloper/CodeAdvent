@@ -1,7 +1,11 @@
 // COUNTER
 
 extension type Counter<T>._(Map<T, int> map) {
-  factory Counter(Iterable<T> elements) {
+  factory Counter() {
+    return Counter._({});
+  }
+
+  factory Counter.fromIterable(Iterable<T> elements) {
     final map = <T, int>{};
     for (final element in elements) {
       map[element] = (map[element] ?? 0) + 1;
@@ -9,11 +13,21 @@ extension type Counter<T>._(Map<T, int> map) {
     return Counter._(map);
   }
 
+  bool get isEmpty => map.isEmpty;
+
+  Iterable<int> get values => map.values;
+
   int operator [](T key) => map[key] ?? 0;
+
+  void operator []=(T key, int value)  => map[key] = value;
+
+  void increase(T key, int amount) => this[key] += amount;
+
+  Iterable<(T, int)> records() => map.toRecords();
 }
 
 extension CountableIterable<T> on Iterable<T> {
-  Counter<T> get count => Counter(this);
+  Counter<T> get count => Counter.fromIterable(this);
 }
 
 extension ListZipper<T, K> on Iterable<T> {

@@ -134,4 +134,13 @@ extension PositionOps<T> on List<List<T>> {
       }
     }
   }
+
+  Iterable<Position> positionsValueWhere(bool Function(Position, T) test) sync* {
+    for (int i = 0; i < length; ++i) {
+      for (int j = 0; j < this[i].length; ++j) {
+        final pos = Position.fromCoords(i, j);
+        if (test(pos, this[i][j])) yield pos;
+      }
+    }
+  }
 }
