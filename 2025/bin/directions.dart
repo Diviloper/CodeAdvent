@@ -1,3 +1,5 @@
+import 'dart:math';
+
 enum Direction {
   up,
   down,
@@ -104,6 +106,17 @@ extension type Position((int, int) coords) {
   }
 }
 
+extension PositionListOps on List<Position> {
+  Iterable<int> get i => map((pos) => pos.i);
+
+  Iterable<int> get j => map((pos) => pos.j);
+
+  (Position, Position) get bounds => (
+    Position.fromCoords(i.reduce(min), j.reduce(min)),
+    Position.fromCoords(i.reduce(max), j.reduce(max)),
+  );
+}
+
 extension Accessor<T> on List<List<T>> {
   T atPosition(Position p) => this[p.i][p.j];
 
@@ -135,7 +148,9 @@ extension PositionOps<T> on List<List<T>> {
     }
   }
 
-  Iterable<Position> positionsValueWhere(bool Function(Position, T) test) sync* {
+  Iterable<Position> positionsValueWhere(
+    bool Function(Position, T) test,
+  ) sync* {
     for (int i = 0; i < length; ++i) {
       for (int j = 0; j < this[i].length; ++j) {
         final pos = Position.fromCoords(i, j);
