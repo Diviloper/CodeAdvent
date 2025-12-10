@@ -1,3 +1,11 @@
+// String
+
+import 'package:trotter/trotter.dart';
+
+extension StringOps on String {
+  String remove(Pattern pattern) => replaceAll(pattern, "");
+}
+
 // COUNTER
 
 extension type Counter<T>._(Map<T, int> map) {
@@ -19,7 +27,7 @@ extension type Counter<T>._(Map<T, int> map) {
 
   int operator [](T key) => map[key] ?? 0;
 
-  void operator []=(T key, int value)  => map[key] = value;
+  void operator []=(T key, int value) => map[key] = value;
 
   void increase(T key, int amount) => this[key] += amount;
 
@@ -171,5 +179,19 @@ extension CrossIterable<T> on Iterable<T> {
         yield (i, j);
       }
     }
+  }
+}
+
+// PowerSet
+
+extension PowerSet<T> on Iterable<T> {
+  Iterable<List<T>> powerSet() sync* {
+    yield [];
+    for (int i = 1; i < length; ++i) {
+      for (final combination in Combinations(i, toList()).iterable) {
+        yield combination;
+      }
+    }
+    yield toList();
   }
 }
